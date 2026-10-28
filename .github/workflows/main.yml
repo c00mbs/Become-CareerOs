@@ -1,0 +1,3 @@
+cd Become-CareerOs
+npm install
+npm run dev
