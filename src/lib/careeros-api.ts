@@ -17,7 +17,9 @@ export const register=(name:string,email:string,password:string)=>call<User>('/a
 export async function login(email:string,password:string){const r=await call<{access_token:string;expires_in:number}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})},false);token.set(r.access_token);return r;}
 export const me=()=>call<User>('/me');
 export const summary=()=>call<Summary>('/career-summary');
-export const events=()=>call<EventItem[]>('/career-timeline');\nexport const addEvent=(input:{type:string;title:string;description?:string;date:string})=>call<EventItem>('/career-timeline',{method:'POST',body:JSON.stringify(input)});
+export const events=()=>call<EventItem[]>('/career-timeline');
+export const addEvent=(input:{type:string;title:string;description?:string;date:string})=>call<EventItem>('/career-timeline',{method:'POST',body:JSON.stringify(input)});
 export const skills=()=>call<Skill[]>('/skills');
 export const addSkill=(skill_name:string,proficiency:number)=>call<Skill>('/skills',{method:'POST',body:JSON.stringify({skill_name,proficiency})});
-export const applications=()=>call<Application[]>('/applications');\nexport const addApplication=(input:{company:string;job_title:string;status:string})=>call<Application>('/applications',{method:'POST',body:JSON.stringify(input)});
+export const applications=()=>call<Application[]>('/applications');
+export const addApplication=(input:{company:string;job_title:string;status:string})=>call<Application>('/applications',{method:'POST',body:JSON.stringify(input)});
