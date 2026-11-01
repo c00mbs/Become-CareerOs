@@ -1,87 +1,30 @@
+'use client';
+import {useCallback,useEffect,useState,FormEvent} from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { mockProfile } from '@/data/mock-record';
-
-export default function DashboardPage() {
-  return (
-    <main className="min-h-screen bg-[#f8f4ed] p-6 text-espresso">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-5 rounded-2xl border border-gold/30 bg-champagne/40 px-4 py-3 text-sm text-brown">Sample workspace · Fictional demonstration data only · Not connected to a live account</div>
-        <header className="mb-8 flex flex-col gap-4 rounded-[28px] border border-espresso/10 bg-white/70 p-6 shadow-soft md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-sm uppercase tracking-[0.25em] text-brown">Career Record</p>
-            <h1 className="mt-2 text-3xl font-semibold">{mockProfile.full_name}</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <Badge className="rounded-full border border-gold/40 bg-champagne/70 text-espresso">
-              Illustrative score: {mockProfile.identity_score}
-            </Badge>
-            <Link href="/profile">
-              <Button variant="outline" className="rounded-full border-espresso/15 bg-transparent text-espresso">
-                View profile
-              </Button>
-            </Link>
-          </div>
-        </header>
-
-        <div className="grid gap-6 lg:grid-cols-[1.3fr_0.7fr]">
-          <Card className="border-espresso/10 bg-white/80">
-            <CardContent className="p-6">
-              <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Career Journey</h2>
-                <span className="text-sm text-brown">Narrative timeline</span>
-              </div>
-
-              <div className="space-y-5">
-                {mockProfile.experience.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-espresso/10 bg-cream p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="text-lg font-medium">{item.title}</div>
-                        <div className="mt-1 text-brown">{item.company}</div>
-                      </div>
-                      <div className="text-sm text-brown">{item.start_date} — {item.end_date}</div>
-                    </div>
-                    <p className="mt-3 text-sm leading-6 text-brown">{item.description}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="space-y-6">
-            <Card className="border-espresso/10 bg-white/80">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold">Skills</h3>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {mockProfile.skills.map((skill) => (
-                    <Badge key={skill.id} className="rounded-full border border-espresso/10 bg-champagne/60 text-espresso">
-                      {skill.skill_name}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-espresso/10 bg-white/80">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold">Example growth prompt</h3>
-                <div className="mt-4 rounded-2xl border border-gold/30 bg-gold/10 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm uppercase tracking-[0.2em] text-brown">Opportunity</p>
-                      <p className="mt-2 text-lg font-medium">Earn Lean Six Sigma</p>
-                    </div>
-                    <Badge className="rounded-full bg-gold text-espresso">Sample</Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
+import {useRouter} from 'next/navigation';
+import {Activity,BriefcaseBusiness,LogOut,Plus,RefreshCw,Sparkles} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {Card,CardContent} from '@/components/ui/card';
+import {Badge} from '@/components/ui/badge';
+import {addSkill,ApiError,applications,events,me,skills,summary,token,type Application,type EventItem,type Skill,type Summary,type User} from '@/lib/careeros-api';
+export default function DashboardPage(){
+ const router=useRouter();const[user,setUser]=useState<User|null>(null);const[stats,setStats]=useState<Summary|null>(null);const[timeline,setTimeline]=useState<EventItem[]>([]);const[skillRows,setSkillRows]=useState<Skill[]>([]);const[apps,setApps]=useState<Application[]>([]);const[skillName,setSkillName]=useState('');const[level,setLevel]=useState('3');const[busy,setBusy]=useState(true);const[saving,setSaving]=useState(false);const[error,setError]=useState('');
+ const load=useCallback(async()=>{setBusy(true);setError('');if(!token.get()){router.replace('/login');return}try{const[u,s,t,k,a]=await Promise.all([me(),summary(),events(),skills(),applications()]);setUser(u);setStats(s);setTimeline(t);setSkillRows(k);setApps(a)}catch(e){if(e instanceof ApiError&&e.status===401){token.clear();router.replace('/login');return}setError(e instanceof Error?e.message:'Unable to load your record.')}finally{setBusy(false)}},[router]);
+ useEffect(()=>{void load()},[load]);
+ async function submitSkill(e:FormEvent){e.preventDefault();if(!skillName.trim())return;setSaving(true);setError('');try{const row=await addSkill(skillName.trim(),Number(level));setSkillRows(v=>[...v,row].sort((a,b)=>a.skill_name.localeCompare(b.skill_name)));setSkillName('');setStats(await summary())}catch(e){setError(e instanceof Error?e.message:'Could not save skill.')}finally{setSaving(false)}}
+ function signOut(){token.clear();router.replace('/login')}
+ if(busy)return <main className="flex min-h-screen items-center justify-center bg-cream text-brown">Opening your Career Record…</main>;
+ return <main className="min-h-screen bg-cream px-5 py-8 text-espresso md:px-8"><div className="mx-auto max-w-6xl">
+ <header className="mb-10 flex flex-wrap items-center justify-between gap-4"><Link href="/" className="text-sm font-semibold tracking-widest">BECOME / CAREEROS</Link><div className="flex gap-2"><Button variant="outline" onClick={()=>void load()} className="rounded-full border-espresso/15 bg-white/70 text-espresso"><RefreshCw className="mr-2 h-4 w-4"/>Refresh</Button><Button variant="outline" onClick={signOut} className="rounded-full border-espresso/15 bg-white/70 text-espresso"><LogOut className="mr-2 h-4 w-4"/>Sign out</Button></div></header>
+ <section className="mb-8"><p className="text-xs uppercase tracking-[.25em] text-brown">Your Career Record</p><h1 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">You're becoming, {user?.name.split(' ')[0]||'you'}.</h1><p className="mt-3 max-w-2xl leading-7 text-brown">A living record of your experience, skills, and momentum. Built from what you add—not assumptions.</p></section>
+ {error&&<p role="alert" className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</p>}
+ <section className="mb-8 grid gap-4 sm:grid-cols-3">
+ <Card className="border-espresso/10 bg-white/85"><CardContent className="flex items-center justify-between p-5"><div><p className="text-sm text-brown">Skills documented</p><p className="mt-2 text-3xl font-semibold">{stats?.counts.skills??0}</p></div><Sparkles className="h-6 w-6 text-gold"/></CardContent></Card>
+ <Card className="border-espresso/10 bg-white/85"><CardContent className="flex items-center justify-between p-5"><div><p className="text-sm text-brown">Career milestones</p><p className="mt-2 text-3xl font-semibold">{stats?.counts.career_events??0}</p></div><Activity className="h-6 w-6 text-gold"/></CardContent></Card>
+ <Card className="border-espresso/10 bg-white/85"><CardContent className="flex items-center justify-between p-5"><div><p className="text-sm text-brown">Opportunities tracked</p><p className="mt-2 text-3xl font-semibold">{stats?.counts.applications??0}</p></div><BriefcaseBusiness className="h-6 w-6 text-gold"/></CardContent></Card></section>
+ <div className="grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
+ <Card className="border-espresso/10 bg-white/85"><CardContent className="p-6 md:p-7"><p className="text-xs uppercase tracking-[.2em] text-brown">Your history</p><h2 className="mt-1 text-2xl font-semibold">Career Journey</h2>{timeline.length?<div className="mt-7 space-y-5">{timeline.map(ev=><div key={ev.id} className="relative border-l border-gold/70 pb-2 pl-5"><span className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-gold"/><p className="text-xs uppercase tracking-wider text-brown">{ev.type} · {new Date(ev.date+'T00:00:00').toLocaleDateString()}</p><h3 className="mt-1 text-lg font-medium">{ev.title}</h3>{ev.description&&<p className="mt-1 text-sm leading-6 text-brown">{ev.description}</p>}</div>)}</div>:<div className="mt-6 rounded-2xl border border-dashed border-espresso/20 bg-cream p-6"><h3 className="font-medium">Your timeline starts here.</h3><p className="mt-2 text-sm leading-6 text-brown">Add a promotion, project, course, achievement, or career milestone. It will appear here once saved.</p></div>}</CardContent></Card>
+ <div className="space-y-6"><Card className="border-espresso/10 bg-white/85"><CardContent className="p-6"><p className="text-xs uppercase tracking-[.2em] text-brown">Capability inventory</p><h2 className="mt-1 text-2xl font-semibold">Your Skills</h2><div className="mt-5 flex flex-wrap gap-2">{skillRows.map(s=><Badge key={s.id} className="rounded-full border border-espresso/10 bg-champagne/60 px-3 py-1 text-espresso">{s.skill_name}<span className="ml-2 text-brown">{s.proficiency}/5</span></Badge>)}</div><form onSubmit={submitSkill} className="mt-6 border-t border-espresso/10 pt-5"><label className="block text-sm font-medium">Add a skill<input value={skillName} onChange={e=>setSkillName(e.target.value)} maxLength={100} placeholder="e.g. Project management" className="mt-2 w-full rounded-xl border border-espresso/15 bg-cream px-4 py-3 outline-none focus:border-gold"/></label><div className="mt-3 flex gap-3"><select aria-label="Proficiency" value={level} onChange={e=>setLevel(e.target.value)} className="rounded-xl border border-espresso/15 bg-cream px-3"><option value="1">Learning · 1</option><option value="2">Developing · 2</option><option value="3">Proficient · 3</option><option value="4">Advanced · 4</option><option value="5">Expert · 5</option></select><Button disabled={saving||!skillName.trim()} className="flex-1 rounded-full bg-espresso text-cream"><Plus className="mr-2 h-4 w-4"/>{saving?'Saving…':'Add skill'}</Button></div></form></CardContent></Card>
+ <Card className="border-espresso/10 bg-white/85"><CardContent className="p-6"><p className="text-xs uppercase tracking-[.2em] text-brown">Career activity</p><h2 className="mt-1 text-2xl font-semibold">Opportunities</h2>{apps.length?<div className="mt-5 space-y-3">{apps.slice(0,5).map(a=><div key={a.id} className="rounded-xl border border-espresso/10 bg-cream p-3"><p className="font-medium">{a.job_title}</p><div className="mt-1 flex justify-between gap-2 text-sm text-brown"><span>{a.company}</span><span>{a.status}</span></div></div>)}</div>:<p className="mt-4 text-sm leading-6 text-brown">Your application tracker is ready. Opportunities you add will appear here.</p>}</CardContent></Card></div></div>
+ <p className="mt-8 text-center text-xs text-brown">Private account · Authenticated CareerOS data · A platform within Become</p></div></main>
 }
