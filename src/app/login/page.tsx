@@ -1,0 +1,12 @@
+'use client';
+import {useState,FormEvent} from 'react';
+import Link from 'next/link';
+import {useRouter} from 'next/navigation';
+import {Button} from '@/components/ui/button';
+import {Card,CardContent} from '@/components/ui/card';
+import {login,ApiError} from '@/lib/careeros-api';
+export default function LoginPage(){
+ const router=useRouter();const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[error,setError]=useState('');const[busy,setBusy]=useState(false);
+ async function submit(e:FormEvent){e.preventDefault();setBusy(true);setError('');try{await login(email,password);router.replace('/dashboard')}catch(x){setError(x instanceof ApiError?x.message:'Could not connect to CareerOS.')}finally{setBusy(false)}}
+ return <main className="flex min-h-screen items-center justify-center bg-cream p-6 text-espresso"><Card className="w-full max-w-md border-espresso/10 bg-white/90 shadow-soft"><CardContent className="p-9"><Link href="/" className="text-sm font-semibold tracking-widest">BECOME / CAREEROS</Link><p className="mt-12 text-xs uppercase tracking-[.25em] text-brown">Your story continues</p><h1 className="mt-3 text-4xl font-semibold">Welcome back.</h1><p className="mt-3 text-brown">Sign in to your private Career Record.</p><form onSubmit={submit} className="mt-8 space-y-5"><label className="block text-sm">Email<input type="email" required autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-2 w-full rounded-xl border border-espresso/15 bg-cream p-3"/></label><label className="block text-sm">Password<input type="password" required autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} className="mt-2 w-full rounded-xl border border-espresso/15 bg-cream p-3"/></label>{error&&<p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800">{error}</p>}<Button disabled={busy} className="w-full rounded-full bg-espresso py-6 text-cream">{busy?'Signing in…':'Sign in'}</Button></form><p className="mt-7 text-center text-sm text-brown">New here? <Link href="/register" className="font-semibold text-espresso underline">Create your account</Link></p></CardContent></Card></main>
+}
