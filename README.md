@@ -9,6 +9,9 @@ CareerOS is the career-record platform within **Become**.
 - FastAPI client connected to the CareerOS backend
 - Authenticated dashboard reading the signed-in user's profile, career timeline, skills, applications, and career summary
 - Skill creation saved to the user's authenticated API account
+- Career milestone creation and a timeline backed by the user's API records
+- Opportunity/application creation and a live application list
+- Early Career DNA strength signals calculated from documented skills
 - Sign-out and expired-token handling
 
 ## Backend
