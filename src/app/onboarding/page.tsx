@@ -10,7 +10,7 @@ export default function OnboardingPage() {
         <Card className="border-espresso/10 bg-white/80 shadow-soft">
           <CardContent className="p-8 md:p-12">
             <div className="mb-6 flex items-center gap-3">
-              <Badge className="rounded-full border border-gold/40 bg-champagne/70 text-espresso">Foundation</Badge>
+              <Badge className="rounded-full border border-gold/40 bg-champagne/70 text-espresso">Your beginning</Badge>
             </div>
 
             <h1 className="text-4xl font-semibold tracking-[-0.05em]">Build your Career Record</h1>
@@ -38,12 +38,12 @@ export default function OnboardingPage() {
             </div>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              <Link href="/dashboard">
-                <Button className="rounded-full bg-espresso text-cream hover:bg-brown">Continue to dashboard</Button>
+              <Link href="/register">
+                <Button className="rounded-full bg-espresso text-cream hover:bg-brown">Create your account</Button>
               </Link>
-              <Link href="/profile">
+              <Link href="/login">
                 <Button variant="outline" className="rounded-full border-espresso/15 bg-transparent text-espresso">
-                  View profile
+                  Already have an account? Sign in
                 </Button>
               </Link>
             </div>
