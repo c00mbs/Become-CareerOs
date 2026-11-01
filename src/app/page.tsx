@@ -33,9 +33,9 @@ export default function HomePage() {
         </Link>
         <nav className="hidden items-center gap-8 text-sm text-brown md:flex">
           <Link href="#platform">Platform</Link>
-          <Link href="/dashboard">Demo record</Link>
+          <Link href="/login">Sign in</Link>
         </nav>
-        <Link href="/onboarding">
+        <Link href="/register">
           <Button className="rounded-full bg-espresso text-cream hover:bg-brown">Explore CareerOS</Button>
         </Link>
       </header>
@@ -54,12 +54,12 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link href="/onboarding">
               <Button className="rounded-full bg-gold px-6 text-espresso hover:bg-[#bd8f2f]">
-                Explore the platform <ArrowRight className="ml-2 h-4 w-4" />
+                Build your Career Record <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/login">
               <Button variant="outline" className="rounded-full border-espresso/20 bg-transparent text-espresso">
-                View sample record
+                Sign in to CareerOS
               </Button>
             </Link>
           </div>
