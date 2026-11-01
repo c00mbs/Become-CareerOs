@@ -1,15 +1,28 @@
 # Become · CareerOS
 
-CareerOS is a platform within Become: a career-record and development experience intended to bring a person's work history, education, skills, milestones, and career insights into one place.
+CareerOS is the career-record platform within **Become**.
 
-## Current status
+## What is implemented
 
-This repository is the **Next.js frontend prototype**. The dashboard and profile pages use fictional sample data to demonstrate the interface. They are not connected to a live account, authentication provider, or CareerOS API yet.
+- Premium Become / CareerOS landing page and onboarding entry
+- Account registration and sign-in screens
+- FastAPI client connected to the CareerOS backend
+- Authenticated dashboard reading the signed-in user's profile, career timeline, skills, applications, and career summary
+- Skill creation saved to the user's authenticated API account
+- Sign-out and expired-token handling
 
-- Home: product introduction and navigation
-- Onboarding: concept flow; not yet a persisted registration flow
-- Dashboard/profile: illustrative sample record only
-- API integration and sign-in: not implemented in this frontend yet
+## Backend
+
+The frontend uses [careeros-api](https://github.com/c00mbs/careeros-api).
+
+The API base URL defaults to the existing Render service:
+`https://careeros-api-yadv.onrender.com`
+
+To override it, set `NEXT_PUBLIC_CAREEROS_API_URL` in the frontend deployment environment.
+
+## Required deployment configuration
+
+The API's Render service must allow the actual frontend origin through its `ALLOWED_ORIGINS` environment variable. Set that to the deployed HTTPS frontend origin (and localhost during development if needed). Do not use a guessed domain. The browser cannot complete sign-in until the Render CORS allowlist includes the frontend origin.
 
 ## Run locally
 
@@ -18,12 +31,12 @@ npm install
 npm run dev
 ```
 
-The app uses Next.js 14, React 18, TypeScript, Tailwind CSS, and reusable UI components.
+Set `NEXT_PUBLIC_CAREEROS_API_URL` if using a local API. Otherwise the app uses the configured Render API URL.
 
-## Related backend
+## Authentication note
 
-The candidate FastAPI backend is [careeros-api](https://github.com/c00mbs/careeros-api). It is being repaired and tested separately. Do not treat the frontend and API as an integrated production system until authentication, API requests, persistence, and deployment are verified end to end.
+The current API issues short-lived bearer tokens. The frontend stores the access token in browser session storage, which clears when the tab session ends. This is an MVP implementation; a production hardening pass should move token handling to secure, HttpOnly cookies through a same-origin server-side proxy and add a CSRF strategy.
 
-## Demo-data policy
+## Honest product boundary
 
-All names, employers, dates, education, certifications, and scores shown in the demo are fictional placeholders. Replace them only with verified user-provided records when real profile functionality is implemented.
+Registration, login, live dashboard reads, and skill creation are wired in code. End-to-end browser verification against the deployed API and frontend deployment CORS configuration are still required before calling the complete user journey production-ready. Profile editing, experience/education CRUD, and full application-tracker creation are future integration work.
