@@ -1,5 +1,9 @@
 name: Become CareerOS frontend checks
 
+concurrency:
+  group: frontend-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main]
