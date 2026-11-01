@@ -1,60 +1,14 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { mockProfile } from '@/data/mock-record';
-
-export default function ProfilePage() {
-  return (
-    <main className="min-h-screen bg-cream px-6 py-10 text-espresso">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-5 rounded-2xl border border-gold/30 bg-champagne/40 px-4 py-3 text-sm text-brown">
-          Sample workspace · Fictional demonstration data only · Not connected to a live account
-        </div>
-        <Card className="border-espresso/10 bg-white/80 shadow-soft">
-          <CardContent className="p-8">
-            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold bg-champagne text-xl font-semibold">
-                  TM
-                </div>
-                <div>
-                  <h1 className="text-3xl font-semibold">{mockProfile.full_name}</h1>
-                  <p className="text-brown">{mockProfile.headline}</p>
-                </div>
-              </div>
-              <Badge className="rounded-full border border-gold/40 bg-champagne/70 text-espresso">
-                Illustrative score: {mockProfile.identity_score}
-              </Badge>
-            </div>
-
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div className="rounded-2xl border border-espresso/10 bg-cream p-5">
-                <div className="text-sm uppercase tracking-[0.2em] text-brown">Education</div>
-                <div className="mt-4 space-y-3">
-                  {mockProfile.education.map((item) => (
-                    <div key={item.id}>
-                      <div className="font-medium">{item.school}</div>
-                      <div className="text-brown">{item.degree}</div>
-                      <div className="text-sm text-brown">GPA: {item.gpa}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-espresso/10 bg-cream p-5">
-                <div className="text-sm uppercase tracking-[0.2em] text-brown">Certifications</div>
-                <div className="mt-4 space-y-3">
-                  {mockProfile.certifications.map((item) => (
-                    <div key={item.id}>
-                      <div className="font-medium">{item.certification_name}</div>
-                      <div className="text-brown">{item.issuer}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
-  );
+'use client';
+import {useEffect,useState} from 'react';
+import Link from 'next/link';
+import {useRouter} from 'next/navigation';
+import {ArrowLeft,LogOut} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {Card,CardContent} from '@/components/ui/card';
+import {ApiError,me,skills,summary,token,type User,type Skill,type Summary} from '@/lib/careeros-api';
+export default function ProfilePage(){
+ const router=useRouter();const[user,setUser]=useState<User|null>(null);const[rows,setRows]=useState<Skill[]>([]);const[stats,setStats]=useState<Summary|null>(null);const[error,setError]=useState('');const[loading,setLoading]=useState(true);
+ useEffect(()=>{if(!token.get()){router.replace('/login');return}Promise.all([me(),skills(),summary()]).then(([u,s,st])=>{setUser(u);setRows(s);setStats(st)}).catch(e=>{if(e instanceof ApiError&&e.status===401){token.clear();router.replace('/login')}else setError(e instanceof Error?e.message:'Unable to load profile')}).finally(()=>setLoading(false))},[router]);
+ if(loading)return <main className="flex min-h-screen items-center justify-center bg-cream text-brown">Loading your profile…</main>;
+ return <main className="min-h-screen bg-cream px-6 py-10 text-espresso"><div className="mx-auto max-w-4xl"><header className="mb-8 flex items-center justify-between"><Link href="/dashboard" className="inline-flex items-center text-sm text-brown"><ArrowLeft className="mr-2 h-4 w-4"/>Back to Career Record</Link><Button variant="outline" onClick={()=>{token.clear();router.replace('/login')}} className="rounded-full border-espresso/15 bg-white/70 text-espresso"><LogOut className="mr-2 h-4 w-4"/>Sign out</Button></header>{error&&<p role="alert" className="mb-5 rounded-xl bg-red-50 p-4 text-red-800">{error}</p>}<Card className="border-espresso/10 bg-white/85 shadow-soft"><CardContent className="p-8 md:p-10"><p className="text-xs uppercase tracking-[.2em] text-brown">Become / CareerOS</p><h1 className="mt-3 text-4xl font-semibold">{user?.name}</h1><p className="mt-2 text-brown">{user?.email}</p><div className="mt-8 grid gap-4 sm:grid-cols-3">{[['Skills',stats?.counts.skills??0],['Milestones',stats?.counts.career_events??0],['Applications',stats?.counts.applications??0]].map(([label,value])=><div key={label} className="rounded-2xl bg-cream p-5"><p className="text-sm text-brown">{label}</p><p className="mt-2 text-3xl font-semibold">{value}</p></div>)}</div><section className="mt-8"><h2 className="text-xl font-semibold">Documented skills</h2>{rows.length?<div className="mt-4 flex flex-wrap gap-2">{rows.map(s=><span key={s.id} className="rounded-full border border-espresso/10 bg-champagne/60 px-4 py-2 text-sm">{s.skill_name} · {s.proficiency}/5</span>)}</div>:<p className="mt-3 text-sm text-brown">Your skills will appear here as you add them to your Career Record.</p>}</section><p className="mt-8 border-t border-espresso/10 pt-5 text-xs leading-6 text-brown">This profile displays account information and records returned by the authenticated CareerOS API. Experience and education editing will be added as those data models are implemented.</p></CardContent></Card></div></main>
 }
