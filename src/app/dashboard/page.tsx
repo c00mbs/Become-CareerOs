@@ -9,7 +9,7 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-[#f8f4ed] p-6 text-espresso">
       <div className="mx-auto max-w-6xl">
-        <header className="mb-8 flex flex-col gap-4 rounded-[28px] border border-espresso/10 bg-white/70 p-6 shadow-soft md:flex-row md:items-center md:justify-between">
+        <div className="mb-5 rounded-2xl border border-gold/30 bg-champagne/40 px-4 py-3 text-sm text-brown">Sample workspace · Fictional demonstration data only · Not connected to a live account</div>\n        <header className="mb-8 flex flex-col gap-4 rounded-[28px] border border-espresso/10 bg-white/70 p-6 shadow-soft md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.25em] text-brown">Career Record</p>
             <h1 className="mt-2 text-3xl font-semibold">{mockProfile.full_name}</h1>
