@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { ArrowRight, BriefcaseBusiness, ChartNoAxesCombined, GraduationCap } from 'lucide-react';
+import { ArrowRight, Briefcase, BarChart3, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 const pillars = [
   {
-    icon: BriefcaseBusiness,
+    icon: Briefcase,
     title: 'Career Record',
     description: 'Bring experience, projects, and milestones into one evolving record.',
   },
@@ -16,7 +16,7 @@ const pillars = [
     description: 'Track what you know, what you are learning, and where you want to grow.',
   },
   {
-    icon: ChartNoAxesCombined,
+    icon: BarChart3,
     title: 'Career Insights',
     description: 'Turn your history into clearer evidence for your next opportunity.',
   },
