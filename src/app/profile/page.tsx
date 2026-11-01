@@ -1,27 +1,28 @@
-import Image from 'next/image';
-import { mockProfile } from '@/data/mock-record';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { mockProfile } from '@/data/mock-record';
 
 export default function ProfilePage() {
   return (
     <main className="min-h-screen bg-cream px-6 py-10 text-espresso">
       <div className="mx-auto max-w-5xl">
+        <div className="mb-5 rounded-2xl border border-gold/30 bg-champagne/40 px-4 py-3 text-sm text-brown">
+          Sample workspace · Fictional demonstration data only · Not connected to a live account
+        </div>
         <Card className="border-espresso/10 bg-white/80 shadow-soft">
           <CardContent className="p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
-                <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-gold bg-champagne">
-                  <Image src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80" alt={mockProfile.full_name} fill className="object-cover" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold bg-champagne text-xl font-semibold">
+                  TM
                 </div>
                 <div>
                   <h1 className="text-3xl font-semibold">{mockProfile.full_name}</h1>
                   <p className="text-brown">{mockProfile.headline}</p>
                 </div>
               </div>
-
               <Badge className="rounded-full border border-gold/40 bg-champagne/70 text-espresso">
-                Identity Score: {mockProfile.identity_score}
+                Illustrative score: {mockProfile.identity_score}
               </Badge>
             </div>
 
