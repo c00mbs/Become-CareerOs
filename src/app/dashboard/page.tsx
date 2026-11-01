@@ -16,7 +16,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <Badge className="rounded-full border border-gold/40 bg-champagne/70 text-espresso">
-              Identity Score: {mockProfile.identity_score}
+              Illustrative score: {mockProfile.identity_score}
             </Badge>
             <Link href="/profile">
               <Button variant="outline" className="rounded-full border-espresso/15 bg-transparent text-espresso">
@@ -67,14 +67,14 @@ export default function DashboardPage() {
 
             <Card className="border-espresso/10 bg-white/80">
               <CardContent className="p-6">
-                <h3 className="text-xl font-semibold">Next Recommendation</h3>
+                <h3 className="text-xl font-semibold">Example growth prompt</h3>
                 <div className="mt-4 rounded-2xl border border-gold/30 bg-gold/10 p-4">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm uppercase tracking-[0.2em] text-brown">Opportunity</p>
                       <p className="mt-2 text-lg font-medium">Earn Lean Six Sigma</p>
                     </div>
-                    <Badge className="rounded-full bg-gold text-espresso">+5 score</Badge>
+                    <Badge className="rounded-full bg-gold text-espresso">Sample</Badge>
                   </div>
                 </div>
               </CardContent>
